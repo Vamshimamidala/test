@@ -17,7 +17,7 @@ const port = 3000;
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://vamshimamidala12:1ZgxEe9F2cmTRk5I@cluster0.f1nlu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0').then(() => {
+mongoose.connect('mongodb+srv://vamshimamidala12:DYMhgCvGpZ2neUpD@test.7oocg.mongodb.net/?retryWrites=true&w=majority&appName=test').then(() => {
   console.log('Connected to MongoDB');
 }).catch((error) => {
   console.error('Error connecting to MongoDB:', error);
