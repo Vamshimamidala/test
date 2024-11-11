@@ -123,7 +123,7 @@ router.post('/forgot', async (req, res) => {
 
         // Create a JWT token that expires in 2 minutes
         const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '10m' });
-        const resetLink = `https://restpage1.onrender.com/reset-password/${token}`;
+        const resetLink = `https://restpage1.onrender.com/${token}`;
 
         // Send email with the reset link
         await transporter.sendMail({
