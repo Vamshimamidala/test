@@ -125,7 +125,7 @@ router.post('/login', async (req, res) => {
         const durationSeconds = 60; // For 1 minute
  const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: durationSeconds });
         
-        const resetLink = `https://landingtask-1.netlify.app?token=${token}`;
+        const resetLink = `https://reset2.onrender.comhttps://reset2.onrender.com?token=${token}`;
 
         // Send email with the reset link
         await transporter.sendMail({
