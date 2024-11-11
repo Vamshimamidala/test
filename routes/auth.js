@@ -51,6 +51,7 @@ const authMiddleware = (req, res, next) => {
     const token = authHeader.replace('Bearer ', '');
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
+        console.log('Token expires at:', new Date(decoded.exp * 1000)); // Log expiration
         req.user = decoded;
         next();
     } catch (err) {
@@ -110,9 +111,8 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Route to request a password reset
  // Route to request a password reset
-router.post('/forgot', async (req, res) => {
+ router.post('/forgot', async (req, res) => {
     const { email } = req.body;
 
     try {
@@ -121,9 +121,11 @@ router.post('/forgot', async (req, res) => {
             return res.status(400).json({ msg: 'User with this email does not exist' });
         }
 
-        // Create a JWT token that expires in 2 minutes
-        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '10m' });
-        const resetLink = `https://restpage1.onrender.com/reset-password/${token}`;
+        // Generate a token that expires in 10 minutes
+        const durationSeconds = 60; // For 1 minute
+ const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: durationSeconds });
+        
+        const resetLink = `https://landingtask-1.netlify.app?token=${token}`;
 
         // Send email with the reset link
         await transporter.sendMail({
@@ -145,7 +147,7 @@ router.post('/reset-password/:token', async (req, res) => {
     const { newPassword, confirmPassword } = req.body;
 
     try {
-        // Verify the token and handle expiration
+        // Verify token and expiration
         const decoded = jwt.verify(token, JWT_SECRET);
         const user = await User.findById(decoded.userId);
 
@@ -153,13 +155,14 @@ router.post('/reset-password/:token', async (req, res) => {
             return res.status(400).json({ msg: 'Invalid or expired token' });
         }
 
+        // Check if passwords match
         if (newPassword !== confirmPassword) {
             return res.status(400).json({ msg: 'Passwords do not match' });
         }
 
+        // Hash the new password
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedNewPassword;
-
         await user.save();
 
         res.status(200).json({ msg: 'Password reset successfully' });
